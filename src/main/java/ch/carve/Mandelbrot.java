@@ -12,6 +12,8 @@ import javax.swing.*;
 
 public class Mandelbrot extends JFrame {
 
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
     JImageCanvas canvas;
     BufferedImage bImage;
 
@@ -27,7 +29,7 @@ public class Mandelbrot extends JFrame {
         getContentPane().add(rootPanel);
         canvas = new JImageCanvas();
         rootPanel.add(canvas, BorderLayout.CENTER);
-        bImage = new BufferedImage(512, 512, BufferedImage.TYPE_BYTE_GRAY);
+        bImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
     }
 
     /**
@@ -35,12 +37,13 @@ public class Mandelbrot extends JFrame {
      */
     public static void main(String[] args) {
         Mandelbrot mandel = new Mandelbrot();
-        mandel.setSize(600, 600);
+        mandel.setSize(WIDTH + 10, HEIGHT + 10);
         mandel.setVisible(true);
         StopWatch watch = new StopWatch();
         for (int r = 0; r < 5; r++) {
             watch.start();
-            for (double i = 0; i < 1.3; i += 0.02) {
+//            double i = 0;
+            for (double i = 0; i < 0.8; i += 0.01) {
                 mandel.calculateImage(-0.7 + i, 2.1 - i, -1.2 + i, 1.5 - i, 256);
             }
             watch.stop();
@@ -49,16 +52,16 @@ public class Mandelbrot extends JFrame {
     }
 
     public void calculateImage(double minX, double maxX, double minY, double maxY, int maxIteration) {
-        byte[] pixels = new byte[512 * 512];
-        double dx = (maxX - minX) / 512;
-        double dy = (maxY - minY) / 512;
+        byte[] pixels = new byte[WIDTH * HEIGHT];
+        double dx = (maxX - minX) / WIDTH;
+        double dy = (maxY - minY) / HEIGHT;
         double xk = minX;
         double yk = minY;
 
         ExecutorService executor = Executors.newFixedThreadPool(8);
         // create 512 (1 per line) threads
-        Thread threads[] = new Thread[512];
-        for (int y = 0; y < 512; y++) {
+        Thread threads[] = new Thread[HEIGHT];
+        for (int y = 0; y < HEIGHT; y++) {
             executor.submit(new LineCalculator(maxIteration, dx, xk, yk, y, pixels));
             yk += dy;
             xk = minX;
@@ -70,7 +73,7 @@ public class Mandelbrot extends JFrame {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        bImage.getRaster().setDataElements(0, 0, 512, 512, pixels);
+        bImage.getRaster().setDataElements(0, 0, WIDTH, HEIGHT, pixels);
         canvas.setImage(bImage);
     }
 
@@ -99,8 +102,8 @@ public class Mandelbrot extends JFrame {
             double yy;
             double valueX;
             double valueY;
-            int scany = y * 512;
-            for (int x = 0; x < 512; x++) {
+            int scany = y * WIDTH;
+            for (int x = 0; x < WIDTH; x++) {
                 iter = 0;
                 xx = 0;
                 yy = 0;

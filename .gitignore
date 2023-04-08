@@ -1,0 +1,14 @@
+.settings/
+.project
+.classpath
+target/
+/dependency-reduced-pom.xml
+
+**/users.properties
+**/roles.properties
+**/*.jks
+**/.env
+
+.idea
+*.iml
+

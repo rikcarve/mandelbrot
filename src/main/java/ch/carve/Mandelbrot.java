@@ -42,7 +42,6 @@ public class Mandelbrot extends JFrame {
         StopWatch watch = new StopWatch();
         for (int r = 0; r < 5; r++) {
             watch.start();
-//            double i = 0;
             for (double i = 0; i < 0.8; i += 0.01) {
                 mandel.calculateImage(-0.7 + i, 2.1 - i, -1.2 + i, 1.5 - i, 256);
             }
@@ -97,29 +96,24 @@ public class Mandelbrot extends JFrame {
 
         @Override
         public void run() {
-            int iter;
-            double xx;
-            double yy;
-            double valueX;
-            double valueY;
-            int scany = y * WIDTH;
+            int scanY = y * WIDTH;
             for (int x = 0; x < WIDTH; x++) {
-                iter = 0;
-                xx = 0;
-                yy = 0;
-                valueX = 0;
-                valueY = 0;
-                while ((iter < maxIteration) && ((xx + yy) < 4)) {
+                int iteration = 0;
+                double xx = 0;
+                double yy = 0;
+                double valueX = 0;
+                double valueY = 0;
+                while ((iteration < maxIteration) && ((xx + yy) < 4)) {
                     valueY = 2 * valueX * valueY - yk;
                     valueX = xx - yy - xk;
                     xx = valueX * valueX;
                     yy = valueY * valueY;
-                    iter++;
+                    iteration++;
                 }
-                if (iter < maxIteration) {
-                    pixels[scany + x] = (byte) (-127 + (iter % 256));
+                if (iteration < maxIteration) {
+                    pixels[scanY + x] = (byte) (-127 + (iteration % 256));
                 } else {
-                    pixels[scany + x] = 0;
+                    pixels[scanY + x] = 0;
                 }
                 xk += dx;
             }
